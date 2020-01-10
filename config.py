@@ -6,6 +6,10 @@ import argparse
 import logging
 from pathlib import Path
 
+from polyaxon_client.tracking import get_data_paths
+from polyaxon_client.tracking import get_outputs_path
+
+
 def load_arguments():
     argparser = argparse.ArgumentParser(sys.argv[0])
     # data path
@@ -143,6 +147,9 @@ def load_arguments():
     argparser.add_argument('--save_samples',
             action='store_true',
             help='whether to save validation samples from the model.')
+    argparser.add_argument('--atp',
+            action='store_true',
+            help='whether to access atp or not.')
 
 
     args = argparser.parse_args()
@@ -154,6 +161,7 @@ def load_arguments():
     if args.domain_adapt:
         args = update_domain_adapt_datapath(args)
     else:
+        # TODO: get_data_paths()['data-pool'] + '/DAST'
         args.dataDir = os.path.join(args.dataDir, 'data')
         data_root = os.path.join(args.dataDir, args.dataset)
         args.train_path = os.path.join(data_root, 'train')
@@ -205,7 +213,10 @@ def load_arguments():
 
 def update_domain_adapt_datapath(args):
     # update data path
-    args.dataDir = os.path.join(args.dataDir, 'data')
+    if args.atp:
+        args.dataDir = get_data_paths()['data-pool'] + '/DAST'
+    else:
+        args.dataDir = os.path.join(args.dataDir, 'data')
     # target_data
     target_data_root = os.path.join(args.dataDir, args.dataset)
     args.target_train_path = os.path.join(target_data_root, 'train')
@@ -227,6 +238,8 @@ def update_domain_adapt_datapath(args):
         args.dataDir, '_'.join([args.source_dataset, args.dataset, 'multi_vocab']))
 
     # update output path
+    if args.atp:
+        args.modelDir = get_outputs_path()
     args.modelDir = os.path.join(args.modelDir, 'save_model')
     args.target_classifier_path = os.path.join(args.modelDir, 'classifier', args.dataset)
     args.source_classifier_path = os.path.join(args.modelDir, 'classifier', args.source_dataset)

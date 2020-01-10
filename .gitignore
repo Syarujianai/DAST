@@ -3,7 +3,7 @@
 __pycache__
 save_model
 data
-log
+logs
 
 # Packages
 *.egg
