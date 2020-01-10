@@ -8,7 +8,7 @@ framework: tensorflow
 build:
   image: soony1213/deeplearning
   build_steps:
-    - pip3 install --no-cache-dir -U polyaxon-client==0.5.5
+    - pip3 install --no-cache-dir -U polyaxon-client==0.5.5 ipdb
 
 params:
   batch_size: 64
