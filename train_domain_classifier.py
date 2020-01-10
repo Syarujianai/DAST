@@ -12,6 +12,7 @@ from vocab import *
 from dataloader.multi_style_dataloader import MultiStyleDataloader
 
 import ipdb
+from tqdm import tqdm
 
 def create_model(sess, args, vocab):
     model = eval('network.classifier.CNN_Model')(args, vocab)
@@ -34,10 +35,10 @@ def create_domain_classifier_batches(loader):
         batches = []
         for i in range(len(source_batches)):
             sbatch = source_batches[i]
-            tbatch = target_batches[i%len(target_batches)]
+            tbatch = target_batches[i%len(target_batches)]  # NOTE: repeat target domain sample for solve class imbalance
 
-            batch = type('', (), {})()
-            # create labels # target.labels == 1, source.labels == 0
+            batch = type('', (), {})()  # NOTE: instantiate a empty class named '' 
+            # create labels # target.labels == 1, source.labels == 0 # NOTE: reconstruct labels without regard to sentiment
             batch.labels = np.zeros((len(sbatch.labels) + len(tbatch.labels)), dtype=np.int32)
             batch.labels[len(sbatch.labels):] = 1
             # create enc_lens
@@ -80,7 +81,7 @@ if __name__ == '__main__':
         for epoch in range(1, 1+args.max_epochs):
             print('--------------------epoch %d--------------------' % epoch)
 
-            for batch in batches:
+            for batch in tqdm(batches, ncols=80):
                 results = model.run_train_step(sess, batch)
                 step_loss = results['loss']
                 loss += step_loss / args.train_checkpoint_step

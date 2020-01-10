@@ -16,6 +16,9 @@ from config import load_arguments
 from dataloader.multi_style_dataloader import MultiStyleDataloader
 from dataloader.online_dataloader import OnlineDataloader
 
+import ipdb
+from tqdm import tqdm
+
 smoothie = SmoothingFunction().method4
 
 logger = logging.getLogger(__name__)
@@ -197,7 +200,7 @@ if __name__ == '__main__':
             source_len = len(source_batches)
             target_len = len(target_batches)
             iter_len = max(source_len, target_len)
-            for i in range(iter_len):
+            for i in tqdm(range(iter_len)):
                 model.run_train_step(sess, 
                     target_batches[i % target_len], source_batches[i % source_len], accumulator, epoch)
 

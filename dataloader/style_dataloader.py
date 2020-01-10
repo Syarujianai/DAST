@@ -190,22 +190,21 @@ class StyleDataloader(object):
         assert filelist, ('Error: Empty filelist at %s' % data_path)  # check filelist isn't empty
 
         for f in filelist:
-            reader = codecs.open(f, 'r', 'utf-8')
-            while True:
-                string_ = reader.readline()
-                if not string_: break
-                dict_example = json.loads(string_)
-                review = dict_example["review"]
-                score = 1 if dict_example["score"] > 0 else 0
-                # reward = dict_example["reward"]
-                # to evalute bleu, the reference and original sentences are the same
-                example = Example(review, review, score, self._vocab, self._hps)
-                if score == 1:
-                    positive_queue.append(example)
-                elif score == 0:
-                    negative_queue.append(example)
-                else:
-                    raise ValueError('The score %d is not 0 or 1.' % score)
+            with codecs.open(f, 'r', 'utf-8') as reader:
+                lines = reader.readlines()
+                for string_ in lines:
+                    dict_example = json.loads(string_)
+                    review = dict_example["review"]
+                    score = 1 if dict_example["score"] > 0 else 0
+                    # reward = dict_example["reward"]
+                    # to evalute bleu, the reference and original sentences are the same
+                    example = Example(review, review, score, self._vocab, self._hps)
+                    if score == 1:
+                        positive_queue.append(example)
+                    elif score == 0:
+                        negative_queue.append(example)
+                    else:
+                        raise ValueError('The score %d is not 0 or 1.' % score)
 
         print('%s file has %d positive unique sentences.' % (mode, len(positive_queue)))
         print('%s file has %d negative unique sentences.' % (mode, len(negative_queue)))
@@ -216,8 +215,13 @@ class StyleDataloader(object):
             random.shuffle(positive_queue)
             random.shuffle(negative_queue)
 
+        # NOTE: manually balance pos and neg
         while True:
-            if len(positive_queue) > len(negative_queue):
+            if len(negative_queue) == 0:
+                negative_queue.extend(copy.deepcopy(positive_queue))  # TODO
+            elif len(positive_queue) == 0:
+                positive_queue.extend(copy.deepcopy(negative_queue))  # TODO
+            elif len(positive_queue) > len(negative_queue):
                 negative_queue.extend(copy.deepcopy(negative_queue[:len(positive_queue) - len(negative_queue)]))
             elif len(positive_queue) < len(negative_queue):
                 positive_queue.extend(copy.deepcopy(positive_queue[:len(negative_queue) - len(positive_queue)]))

@@ -11,6 +11,7 @@ import ipdb
 import numpy as np
 from numpy import linalg as LA
 import pickle
+from config import load_arguments
 
 logger = logging.getLogger(__name__)
 
@@ -101,7 +102,6 @@ def build_unify_vocab(datapaths, save_path, min_occur=2):
                     if not string_: break
                     dict_example = json.loads(string_)
                     sent = dict_example["review"]
-                    # ipdb.set_trace()
                     words += sent.split()
                     if 'target' in data_path:
                         for word in sent.split():
@@ -115,3 +115,11 @@ def build_unify_vocab(datapaths, save_path, min_occur=2):
     vocab_size = len(word2id)
     with open(save_path, 'wb') as f:
         pickle.dump((vocab_size, word2id, id2word), f, pickle.HIGHEST_PROTOCOL)
+
+if __name__ == "__main__":
+    args = load_arguments()
+    assert args.domain_adapt, "domain_adapt arg should be True."
+
+    if not os.path.isfile(args.multi_vocab):
+        build_unify_vocab([args.target_train_path, args.source_train_path], args.multi_vocab)
+    multi_vocab = Vocabulary(args.multi_vocab)
