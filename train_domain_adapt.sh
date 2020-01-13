@@ -1,0 +1,1 @@
+python .\train_domain_adapt.py --domain_adapt --dataset clue --source_dataset renmin --network DAST

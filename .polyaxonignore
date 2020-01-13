@@ -11,3 +11,4 @@ var
 *.swp
 .DS_Store
 ./.polyaxon
+train_domain_adapt.sh

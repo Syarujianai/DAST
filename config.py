@@ -9,7 +9,7 @@ from pathlib import Path
 from polyaxon_client.tracking import get_data_paths
 from polyaxon_client.tracking import get_outputs_path
 
-os.environ["CUDA_VISIBLE_DEVICES"] = 6
+os.environ["CUDA_VISIBLE_DEVICES"] = "gpu:0"
 
 def load_arguments():
     argparser = argparse.ArgumentParser(sys.argv[0])
@@ -162,7 +162,8 @@ def load_arguments():
     if args.domain_adapt:
         args = update_domain_adapt_datapath(args)
     else:
-        # TODO: get_data_paths()['data-pool'] + '/DAST'
+        if args.atp:
+            args.dataDir = get_data_paths()['data-pool'] + '/DAST'
         args.dataDir = os.path.join(args.dataDir, 'data')
         data_root = os.path.join(args.dataDir, args.dataset)
         args.train_path = os.path.join(data_root, 'train')

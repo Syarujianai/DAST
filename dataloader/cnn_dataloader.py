@@ -79,7 +79,10 @@ class ClassificationBatcher(object):
         self.train_batch = self.create_batches(train_queue, mode="train")
         # update training checkpoint step
         checkpoint_step = int(len(self.train_batch) / (hps.train_checkpoint_frequency*50)) * 50
-        hps.train_checkpoint_step = max(50, checkpoint_step)
+        if checkpoint_step == 0:
+            hps.train_checkpoint_step = 1
+        else:
+            hps.train_checkpoint_step = max(50, checkpoint_step)
 
         self.valid_batch = self.create_batches(valid_queue, mode="valid")
         self.test_batch = self.create_batches(test_queue, mode="test")
