@@ -9,6 +9,7 @@ from pathlib import Path
 from polyaxon_client.tracking import get_data_paths
 from polyaxon_client.tracking import get_outputs_path
 
+os.environ["CUDA_VISIBLE_DEVICES"] = 6
 
 def load_arguments():
     argparser = argparse.ArgumentParser(sys.argv[0])
@@ -217,6 +218,7 @@ def update_domain_adapt_datapath(args):
         args.dataDir = get_data_paths()['data-pool'] + '/DAST'
     else:
         args.dataDir = os.path.join(args.dataDir, 'data')
+    print(args.dataDir)
     # target_data
     target_data_root = os.path.join(args.dataDir, args.dataset)
     args.target_train_path = os.path.join(target_data_root, 'train')
@@ -239,7 +241,8 @@ def update_domain_adapt_datapath(args):
 
     # update output path
     if args.atp:
-        args.modelDir = get_outputs_path()
+        args.modelDir = get_data_paths()['data-pool'] + '/DAST'
+    print(args.modelDir)
     args.modelDir = os.path.join(args.modelDir, 'save_model')
     args.target_classifier_path = os.path.join(args.modelDir, 'classifier', args.dataset)
     args.source_classifier_path = os.path.join(args.modelDir, 'classifier', args.source_dataset)

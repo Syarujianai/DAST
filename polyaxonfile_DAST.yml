@@ -1,0 +1,26 @@
+---
+version: 1
+
+kind: experiment
+
+framework: tensorflow
+
+build:
+  image: soony1213/deeplearning
+  build_steps:
+    - pip3 install --no-cache-dir -U polyaxon-client==0.5.5 ipdb nltk
+
+params:
+  batch_size: 64
+  dataset: clue
+  source_dataset: renmin
+  network: DAST
+  training_portion: 1
+run:
+  cmd:  python3 -u train_domain_adapt.py --domain_adapt \
+                                         --batch_size={{batch_size}} \
+                                         --dataset {{dataset}} \
+                                         --source_dataset {{source_dataset}} \
+                                         --network {{network}} \
+                                         --training_portion {{training_portion}} \
+                                         --atp
