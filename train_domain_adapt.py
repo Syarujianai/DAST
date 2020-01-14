@@ -15,6 +15,7 @@ from vocab import Vocabulary, build_unify_vocab
 from config import load_arguments
 from dataloader.multi_style_dataloader import MultiStyleDataloader
 from dataloader.online_dataloader import OnlineDataloader
+from polyaxon_client.tracking import get_outputs_path
 
 import ipdb
 from tqdm import tqdm
@@ -180,6 +181,16 @@ if __name__ == '__main__':
             domain_classifier = eval('network.classifier.CNN_Model')(args, multi_vocab, 'domain')
             restore_classifier_by_path(domain_classifier, args.domain_classifier_path, 'domain')
 
+        # HACK: test only
+        if args.test:
+            # testing
+            test_batches = loader.get_batches(domain='target', mode='test')
+            logger.info('---testing target domain:')
+            evaluation(sess, args, test_batches, model, 
+                target_classifier, target_vocab, domain_classifier, multi_vocab,
+                os.path.join(get_outputs_path(), 'test'), write_dict, mode='test', domain='target')
+            exit(0)
+        
         # load training dataset
         source_batches = loader.get_batches(domain='source', mode='train')
         target_batches = loader.get_batches(domain='target', mode='train')
@@ -235,6 +246,9 @@ if __name__ == '__main__':
         # testing
         test_batches = loader.get_batches(domain='target', mode='test')
         logger.info('---testing target domain:')
+        # evaluation(sess, args, test_batches, model, 
+        #     target_classifier, target_vocab, domain_classifier, multi_vocab,
+        #     os.path.join(target_output_path, 'test'), write_dict, mode='test', domain='target')
         evaluation(sess, args, test_batches, model, 
             target_classifier, target_vocab, domain_classifier, multi_vocab,
-            os.path.join(target_output_path, 'test'), write_dict, mode='test', domain='target')
+            os.path.join(get_outputs_path, 'test'), write_dict, mode='test', domain='target')

@@ -6,9 +6,9 @@ kind: experiment
 framework: tensorflow
 
 build:
-  image: soony1213/deeplearning
+  image: tensorflow/tensorflow:1.13.0rc1-gpu-py3-jupyter
   build_steps:
-    - pip3 install --no-cache-dir -U polyaxon-client==0.5.5 ipdb nltk
+    - pip3 install --no-cache-dir -U polyaxon-client==0.5.5 ipdb nltk tqdm
 
 params:
   batch_size: 64
@@ -17,10 +17,10 @@ params:
   network: DAST
   training_portion: 1
 run:
-  cmd:  python3 -u train_domain_adapt.py --domain_adapt \
-                                         --batch_size={{batch_size}} \
-                                         --dataset {{dataset}} \
-                                         --source_dataset {{source_dataset}} \
-                                         --network {{network}} \
-                                         --training_portion {{training_portion}} \
-                                         --atp
+  cmd:  CUDA_VISIBLE_DEVICES=0 python3 -u train_domain_adapt.py --domain_adapt \
+                                                                --batch_size={{batch_size}} \
+                                                                --dataset {{dataset}} \
+                                                                --source_dataset {{source_dataset}} \
+                                                                --network {{network}} \
+                                                                --training_portion {{training_portion}} \
+                                                                --atp

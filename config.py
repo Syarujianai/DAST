@@ -9,7 +9,7 @@ from pathlib import Path
 from polyaxon_client.tracking import get_data_paths
 from polyaxon_client.tracking import get_outputs_path
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "gpu:0"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "gpu:0"
 
 def load_arguments():
     argparser = argparse.ArgumentParser(sys.argv[0])
@@ -148,6 +148,9 @@ def load_arguments():
     argparser.add_argument('--save_samples',
             action='store_true',
             help='whether to save validation samples from the model.')
+    argparser.add_argument('--test',
+            action='store_true',
+            help='whether to test model or not.')
     argparser.add_argument('--atp',
             action='store_true',
             help='whether to access atp or not.')
@@ -241,6 +244,8 @@ def update_domain_adapt_datapath(args):
         args.dataDir, '_'.join([args.source_dataset, args.dataset, 'multi_vocab']))
 
     # update output path
+    if args.save_samples:
+        args.max_epochs = 1
     if args.atp:
         args.modelDir = get_data_paths()['data-pool'] + '/DAST'
     print(args.modelDir)

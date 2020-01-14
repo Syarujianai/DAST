@@ -1,0 +1,25 @@
+---
+version: 1
+
+kind: experiment
+
+framework: tensorflow
+
+build:
+  image: tensorflow/tensorflow:1.13.0rc1-gpu-py3-jupyter
+  build_steps:
+    - pip3 install --no-cache-dir -U polyaxon-client==0.5.5 ipdb nltk tqdm
+
+params:
+  batch_size: 64
+  dataset: clue
+  source_dataset: renmin
+  network: DAST
+  training_portion: 1
+run:
+  cmd:  CUDA_VISIBLE_DEVICES=0 python3 -u evaluation.py --domain_adapt \
+                                                        --dataset {{dataset}} \
+                                                        --source_dataset {{source_dataset}} \
+                                                        --atp \
+                                                        --test \
+                                                        --save_samples
