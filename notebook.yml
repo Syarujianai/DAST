@@ -3,10 +3,9 @@ version: 1
 
 kind: notebook
 
-
 backend: lab
 
 build:
-  image: python:3
+  image: tensorflow/tensorflow:1.13.0rc1-gpu-py3-jupyter
   build_steps:
-    - pip3 install jupyterlab
+    - pip3 install --no-cache-dir -U polyaxon-client==0.5.5 ipdb nltk tqdm jupyterlab

@@ -17,9 +17,11 @@ params:
   network: DAST
   training_portion: 1
 run:
-  cmd:  CUDA_VISIBLE_DEVICES=0 python3 -u evaluation.py --domain_adapt \
-                                                        --dataset {{dataset}} \
-                                                        --source_dataset {{source_dataset}} \
-                                                        --atp \
-                                                        --test \
-                                                        --save_samples
+  cmd:  CUDA_VISIBLE_DEVICES=0 python3 -u train_domain_adapt.py --domain_adapt \
+                                                                --dataset {{dataset}} \
+                                                                --source_dataset {{source_dataset}} \
+                                                                --network {{network}} \
+                                                                --atp \
+                                                                --test \
+                                                                --load_model \
+                                                                --save_samples

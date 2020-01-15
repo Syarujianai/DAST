@@ -87,7 +87,7 @@ def create_model(sess, args, vocab):
         logger.info('-----Creating styler model with fresh parameters.-----')
         sess.run(tf.global_variables_initializer())
     if not os.path.exists(args.styler_path):
-            os.makedirs(args.styler_path)
+        os.makedirs(args.styler_path)
     return model
 
 if __name__ == '__main__':

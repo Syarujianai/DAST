@@ -83,6 +83,7 @@ class Model(BaseModel):
         self.optimize_tot = opt.apply_gradients(zip(grad, theta_eg))
         self.optimize_rec = opt.minimize(self.loss_rec, var_list=theta_eg)
         self.optimize_d = opt.minimize(self.loss_d, var_list=theta_d)
+        self.saver = tf.train.Saver(max_to_keep=5)
 
 
     def style_transfer_model(self, args, enc_input_ids, domain_vector,
